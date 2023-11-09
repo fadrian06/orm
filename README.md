@@ -24,8 +24,8 @@ Any model extends the class `\Forestry\Orm\BaseModel`.
 
 ```php
 class User extends \Forestry\Orm\BaseModel {
-	public static $database = 'example';
-	public static $table = 'users';
+  public static $database = 'example';
+  public static $table = 'users';
 }
 ```
 
