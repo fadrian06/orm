@@ -1,10 +1,8 @@
 # Forestry ORM
 
-[![Latest Version](https://img.shields.io/github/release/ForestryCodes/orm.svg?style=flat-square)](https://github.com/ForestryCodes/orm/releases)
+[![Latest Version](https://img.shields.io/github/release/fadrian06/orm.svg?style=flat-square)](https://github.com/fadrian06/orm/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
-[![Build Status](https://img.shields.io/travis/ForestryCodes/orm/master.svg?style=flat-square)](https://travis-ci.org/ForestryCodes/orm)
-[![Codacy Badge](https://www.codacy.com/project/badge/20a3522373ee46bda25bff597480f2ff)](https://www.codacy.com/public/danielgithub/orm)
-[![Total Downloads](https://img.shields.io/packagist/dt/forestry/orm.svg?style=flat-square)](https://packagist.org/packages/forestry/orm)
+[![Total Downloads](https://img.shields.io/packagist/dt/faslatam/orm.svg?style=flat-square)](https://packagist.org/packages/faslatam/orm)
 
 Small ORM for basic CRUD operations.
 
@@ -13,7 +11,7 @@ Small ORM for basic CRUD operations.
 Via Composer
 
 ``` bash
-$ composer require forestry/orm
+$ composer require faslatam/orm
 ```
 
 ## Usage
@@ -26,10 +24,8 @@ Any model extends the class `\Forestry\Orm\BaseModel`.
 
 ```php
 class User extends \Forestry\Orm\BaseModel {
-
 	public static $database = 'example';
 	public static $table = 'users';
-
 }
 ```
 
@@ -40,7 +36,7 @@ class User extends \Forestry\Orm\BaseModel {
 You can define getters and setter for all table fields.
 
 ```php
-$user = new User();
+$user = new User;
 $user->setName('Bob');
 $user->save();
 ```
@@ -48,7 +44,7 @@ $user->save();
 Getters/setters are not mandatory. You can access the properties directly:
 
 ```php
-$user = new User();
+$user = new User;
 $user->name = 'Bob';
 $user->save();
 ```
@@ -66,30 +62,28 @@ A connection is defined with the `set()` method:
 
 ```php
 \Forestry\Orm\Storage::set('default', [
-    'dsn' => 'mysql:host=localhost',
-    'user' => 'root',
-    'password' => '',
-    'option' => [/*any PDO options can be defined here*/]
+  'dsn' => 'mysql:host=localhost',
+  'user' => 'root',
+  'password' => '',
+  'option' => [/* any PDO options can be defined here */]
 ]);
 ```
 
 A model could use another connection if you configure it:
 
 ```php
-use \Forestry\Orm\Storage as Storage;
-use \Forestry\Orm\BaseModel as BaseModel;
+use \Forestry\Orm\Storage;
+use \Forestry\Orm\BaseModel;
 
 Storage::set('myOtherConnection', [
-    'dsn' => 'mysql:host=127.0.0.1',
-    'user' => 'root',
-    'password' => ''
+  'dsn' => 'mysql:host=127.0.0.1',
+  'user' => 'root',
+  'password' => ''
 ]);
 
 class Acme extends BaseModel {
-
-    public static $storage = 'myOtherConnection';
-    public static $table = 'acme_table';
-
+  public static $storage = 'myOtherConnection';
+  public static $table = 'acme_table';
 }
 ```
 
@@ -118,7 +112,7 @@ Storage::delete('myOtherConnection');
 ## Testing
 
 ``` bash
-$ phpunit
+$ composer test
 ```
 
 ## Contributing
@@ -128,6 +122,7 @@ Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 ## Credits
 
 - [daniel-melzer](https://github.com/daniel-melzer)
+- [fadrian06](https://github.com/fadrian06)
 - [All Contributors](../../contributors)
 
 ## License

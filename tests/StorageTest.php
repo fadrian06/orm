@@ -2,67 +2,59 @@
 
 namespace Forestry\Orm;
 
-class StorageTest extends \PHPUnit_Framework_TestCase {
+use LogicException;
+use OutOfBoundsException;
+use PHPUnit\Framework\TestCase;
 
-    /**
-     * Create basic SQLite connection.
-     */
-    public function testSetSQLiteConnection() {
-        $result = Storage::set('default', ['dsn' => 'sqlite::memory:', '']);
+class StorageTest extends TestCase {
+  /**
+   * Create basic SQLite connection.
+   */
+  function testSetSqliteConnection() {
+    $result = Storage::set('default', ['dsn' => 'sqlite::memory:']);
 
-        $this->assertInstanceof('PDO', $result);
-    }
+    $this->assertInstanceof('PDO', $result);
+  }
 
-    /**
-     * Test exception when an already set connection should be set.
-     *
-     * @depends testSetSQLiteConnection
-     * @expectedException \LogicException
-     */
-    public function testLogicExceptionOnAlreadySetConnection() {
-        Storage::set('default', ['dsn' => 'sqlite::memory:', '']);
-    }
+  /**
+   * Test exception when an already set connection should be set.
+   */
+  function testLogicExceptionOnAlreadySetConnection() {
+    $this->expectException(LogicException::class);
+    Storage::set('default', ['dsn' => 'sqlite::memory:']);
+  }
 
-    /**
-     * Test retrieval of a connection.
-     *
-     * @depends testSetSQLiteConnection
-     */
-    public function testGetConnection() {
-        $result = Storage::get('default');
+  /**
+   * Test retrieval of a connection.
+   */
+  function testGetConnection() {
+    $result = Storage::get('default');
 
-        $this->assertInstanceof('PDO', $result);
-    }
+    $this->assertInstanceof('PDO', $result);
+  }
 
-    /**
-     * Test exception when a connection is not set.
-     *
-     * @depends testSetSQLiteConnection
-     * @expectedException \OutOfBoundsException
-     */
-    public function testOutOfBoundExceptionOnNonSetConnection() {
-        Storage::get('notset');
-    }
+  /**
+   * Test exception when a connection is not set.
+   */
+  function testOutOfBoundExceptionOnNonSetConnection() {
+    $this->expectException(OutOfBoundsException::class);
+    Storage::get('notset');
+  }
 
-    /**
-     * Test connection closing.
-     *
-     * @depends testSetSQLiteConnection
-     */
-    public function testDeleteConnection() {
-        $result = Storage::delete('default');
+  /**
+   * Test connection closing.
+   */
+  function testDeleteConnection() {
+    $result = Storage::delete('default');
 
-        $this->assertTrue($result);
-    }
+    $this->assertTrue($result);
+  }
 
-    /**
-     * Test exception when closing a connection which is not set.
-     *
-     * @depends testSetSQLiteConnection
-     * @expectedException \OutOfBoundsException
-     */
-    public function testOutOfBoundExceptionOnClosingNonSetConnection() {
-        Storage::delete('notset');
-    }
-
+  /**
+   * Test exception when closing a connection which is not set.
+   */
+  function testOutOfBoundExceptionOnClosingNonSetConnection() {
+    $this->expectException(OutOfBoundsException::class);
+    Storage::delete('notset');
+  }
 }

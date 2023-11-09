@@ -3,178 +3,169 @@
 namespace Forestry\Orm;
 
 use Forestry\Orm\Test\ModelImplementation;
+use PHPUnit\Framework\TestCase;
 
-class BaseModelTest extends \PHPUnit_Framework_TestCase {
+class BaseModelTest extends TestCase {
+  function setUp(): void {
+    Storage::set('test', [
+      'dsn' => 'sqlite::memory:',
+      [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]
+    ]);
 
-    public function setUp() {
-        Storage::set('test', [
-            'dsn' => 'sqlite::memory:',
-            '',
-            [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]]
-        );
-        Storage::get('test')->exec('
-            DROP TABLE IF EXISTS `test_table`'
-        );
-        Storage::get('test')->exec('
-            CREATE TABLE `test_table` (`id` INT PRIMARY KEY, `name` TEXT);'
-        );
-    }
+    Storage::get('test')->exec('DROP TABLE IF EXISTS test_table');
+    Storage::get('test')->exec('CREATE TABLE test_table (id INT PRIMARY KEY, name TEXT)');
+  }
 
-    public function tearDown() {
-        Storage::delete('test');
-    }
+  function tearDown(): void {
+    Storage::delete('test');
+  }
 
-    /**
-     * Create basic model.
-     */
-    public function testConstructor() {
-        $model = new ModelImplementation();
+  /**
+   * Create basic model.
+   */
+  function testConstructor() {
+    $model = new ModelImplementation;
 
-        $this->assertInstanceof('Forestry\Orm\BaseModel', $model);
-    }
+    $this->assertInstanceof(BaseModel::class, $model);
+  }
 
-    /**
-     * Create basic model with constructor options.
-     */
-    public function testConstructorWithParameters() {
-        $model = new ModelImplementation([
-            'id' => 1,
-            'name' => 'Test'
-        ]);
+  /**
+   * Create basic model with constructor options.
+   */
+  function testConstructorWithParameters() {
+    $model = new ModelImplementation([
+      'id' => 1,
+      'name' => 'Test'
+    ]);
 
-        $this->assertInstanceof('Forestry\Orm\BaseModel', $model);
-        $this->assertEquals('Test', $model->name);
-    }
+    $this->assertInstanceof(BaseModel::class, $model);
+    $this->assertEquals('Test', $model->name);
+  }
 
-    public function testSetAndGet() {
-        $stub = $this->getMockForAbstractClass('Forestry\Orm\BaseModel');
-        $stub->set('`name`', 'Test');
+  function testSetAndGet() {
+    $stub = $this->getMockForAbstractClass(BaseModel::class);
+    $stub->set('`name`', 'Test');
 
-        $this->assertEquals('Test', $stub->get('name'));
-    }
+    $this->assertEquals('Test', $stub->get('name'));
+  }
 
-    public function testGetPK() {
-        $model = new ModelImplementation([
-            'id' => 1,
-            'name' => 'Test'
-        ]);
+  function testGetPk() {
+    $model = new ModelImplementation([
+      'id' => 1,
+      'name' => 'Test'
+    ]);
 
-        $this->assertEquals(1, $model->getPK());
-    }
+    $this->assertEquals(1, $model->getPK());
+  }
 
-    public function testGetTableName() {
-        $table = ModelImplementation::getTable();
+  function testGetTableName() {
+    $table = ModelImplementation::getTable();
 
-        $this->assertEquals('`test_table`', $table);
-    }
+    $this->assertEquals('`test_table`', $table);
+  }
 
-    public function testToArray() {
-        $model = new ModelImplementation([
-            'id' => 1,
-            'name' => 'Test'
-        ]);
+  function testToArray() {
+    $model = new ModelImplementation([
+      'id' => 1,
+      'name' => 'Test'
+    ]);
 
-        $this->assertEquals([
-            'id' => 1,
-            'name' => 'Test'
-        ], $model->toArray());
-    }
+    $this->assertEquals([
+      'id' => 1,
+      'name' => 'Test'
+    ], $model->toArray());
+  }
 
-    public function testToString() {
-        $model = new ModelImplementation([
-            'id' => 1,
-            'name' => 'Test'
-        ]);
+  function testToString() {
+    $model = new ModelImplementation([
+      'id' => 1,
+      'name' => 'Test'
+    ]);
 
-        $this->assertEquals('test.test_table@Forestry\Orm\Test\ModelImplementation {
-    id: 1
-    name: Test
-}
-', (string)$model);
-    }
+    $this->assertEquals(<<<OUTPUT
+    test.test_table@Forestry\Orm\Test\ModelImplementation {\r
+        id: 1\r
+        name: Test\r
+    }\r
 
-    public function testSet() {
-        $model = new ModelImplementation();
-        $model->name = 'Test';
+    OUTPUT, (string) $model);
+  }
 
-        $this->assertEquals(['name' => 'Test'], $model->toArray());
-    }
+  function testSet() {
+    $model = new ModelImplementation();
+    $model->name = 'Test';
 
-    public function testInsert() {
-        $model = new ModelImplementation();
-        $model->name = 'test';
-        $model->insert();
+    $this->assertEquals(['name' => 'Test'], $model->toArray());
+  }
 
-        $this->assertEquals(1, $model->getPK());
-    }
+  function testInsert() {
+    $model = new ModelImplementation();
+    $model->name = 'test';
+    $model->insert();
 
-    public function testUpdate() {
-        $model = new ModelImplementation([
-            'id' => 1,
-            'name' => 'test'
-        ]);
-        $model->name = 'test2';
-        $model->update();
+    $this->assertEquals(1, $model->getPK());
+  }
 
-        $this->assertEquals('test2', $model->name);
-    }
+  function testUpdate() {
+    $model = new ModelImplementation([
+      'id' => 1,
+      'name' => 'test'
+    ]);
+    $model->name = 'test2';
+    $model->update();
 
-    public function testSaveUpdate() {
-        $model = new ModelImplementation([
-            'id' => 1,
-            'name' => 'test2'
-        ]);
-        $model->name = 'test3';
-        $model->save();
+    $this->assertEquals('test2', $model->name);
+  }
 
-        $this->assertEquals('test3', $model->name);
-    }
+  function testSaveUpdate() {
+    $model = new ModelImplementation([
+      'id' => 1,
+      'name' => 'test2'
+    ]);
+    $model->name = 'test3';
+    $model->save();
 
-    public function testSaveInsert() {
-        $model = new ModelImplementation();
-        $model->name = 'test4';
-        $model->save();
+    $this->assertEquals('test3', $model->name);
+  }
 
-        $this->assertEquals('test4', $model->name);
-    }
+  function testSaveInsert() {
+    $model = new ModelImplementation();
+    $model->name = 'test4';
+    $model->save();
 
-    public function testDelete() {
-        $model = new ModelImplementation([
-            'id' => 1,
-            'name' => 'test2'
-        ]);
-        $model->delete();
+    $this->assertEquals('test4', $model->name);
+  }
 
-        $this->assertEquals(null, $model->name);
-    }
+  function testDelete() {
+    $model = new ModelImplementation([
+      'id' => 1,
+      'name' => 'test2'
+    ]);
+    $model->delete();
 
-    public function testRetrieveByPK() {
-        $model = new ModelImplementation();
-        $model->id = 1;
-        $model->name = 'test';
-        $model->insert();
+    $this->assertEquals(null, $model->name);
+  }
 
-        $result = ModelImplementation::retrieveByPK(1);
+  function testRetrieveByPk() {
+    $model = new ModelImplementation();
+    $model->id = 1;
+    $model->name = 'test';
+    $model->insert();
 
-        $this->assertInstanceof('Forestry\Orm\BaseModel', $result);
-        $this->assertEquals('test', $model->name);
-    }
+    $result = ModelImplementation::retrieveByPK(1);
 
-    public function testQuery() {
-        $model = new ModelImplementation();
-        $model->id = 1;
-        $model->name = 'test';
-        $model->insert();
+    $this->assertInstanceof('Forestry\Orm\BaseModel', $result);
+    $this->assertEquals('test', $model->name);
+  }
 
-        $result = ModelImplementation::query('
-            SELECT
-                *
-            FROM
-                `test_table`
-            WHERE
-                `name` LIKE "test"');
+  function testQuery() {
+    $model = new ModelImplementation();
+    $model->id = 1;
+    $model->name = 'test';
+    $model->insert();
 
-        $this->assertArrayHasKey(0, $result);
-    }
+    $result = ModelImplementation::query('SELECT * FROM test_table WHERE name LIKE "test"');
 
+    $this->assertArrayHasKey(0, $result);
+  }
 }

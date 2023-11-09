@@ -2,8 +2,7 @@
 
 Contributions are **welcome** and will be fully **credited**.
 
-We accept contributions via Pull Requests on [Github](https://github.com/ForestryCodes/log).
-
+We accept contributions via Pull Requests on [Github](https://github.com/fadrian06/orm).
 
 ## Pull Requests
 

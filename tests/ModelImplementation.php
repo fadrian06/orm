@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: dm
@@ -9,8 +10,6 @@
 namespace Forestry\Orm\Test;
 
 class ModelImplementation extends \Forestry\Orm\BaseModel {
-
-    protected static $table = 'test_table';
-    protected static $storage = 'test';
-
+  protected static $table = 'test_table';
+  protected static $storage = 'test';
 }
